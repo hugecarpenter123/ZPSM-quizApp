@@ -1,0 +1,57 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Afacad-Bold.ttf",
+      "sha1": "c1f61e01953bee234bd74c3a2bf01a8b7da79bc4"
+    },
+    {
+      "path": "assets/fonts/Afacad-BoldItalic.ttf",
+      "sha1": "610235bdad4e3806b2cc7dc3b7dd403d98e48b17"
+    },
+    {
+      "path": "assets/fonts/Afacad-Italic-VariableFont_wght.ttf",
+      "sha1": "f1306c071603f61211548249d8908e53c98584a8"
+    },
+    {
+      "path": "assets/fonts/Afacad-Italic.ttf",
+      "sha1": "9c9308d5f0580cfb7207b5ba1db13b877c55d645"
+    },
+    {
+      "path": "assets/fonts/Afacad-Medium.ttf",
+      "sha1": "778e1a8162c85552929ea59a6a0d1358502eb1d7"
+    },
+    {
+      "path": "assets/fonts/Afacad-MediumItalic.ttf",
+      "sha1": "59c1a20358a9a027aeea65609c8cbdd34a8b1a33"
+    },
+    {
+      "path": "assets/fonts/Afacad-Regular.ttf",
+      "sha1": "3dd29afd23f5171addf5a2d8c3d633c51a9ac765"
+    },
+    {
+      "path": "assets/fonts/Afacad-SemiBold.ttf",
+      "sha1": "d0665680af7c7f7e1740118dc9847c77b8455198"
+    },
+    {
+      "path": "assets/fonts/Afacad-SemiBoldItalic.ttf",
+      "sha1": "92bbb36800d93007f84eb28fd30bb5a47058fe63"
+    },
+    {
+      "path": "assets/fonts/Afacad-VariableFont_wght.ttf",
+      "sha1": "7557a2a7c3b288acfe31b48ac6424b2231e45c5f"
+    },
+    {
+      "path": "assets/fonts/Afacad.zip",
+      "sha1": "a0ad45f3a66b48fa28525525b61bb61657456453"
+    },
+    {
+      "path": "assets/fonts/RubikDoodleShadow-Regular.ttf",
+      "sha1": "1b0092781395a98142548d15929cfbb2c16e2334"
+    },
+    {
+      "path": "assets/fonts/Rubik_Doodle_Shadow.zip",
+      "sha1": "bbe4eb6e9775be88b12c5b076e00c13828133ae1"
+    }
+  ]
+}
