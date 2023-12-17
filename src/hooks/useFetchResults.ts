@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-type ResultJson = {
+export type ResultJson = {
     nick: string,
     score: number,
     total: number
