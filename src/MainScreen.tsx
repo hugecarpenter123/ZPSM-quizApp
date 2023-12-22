@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
-import tests from './tests/Tests';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { DrawerParamList } from './drawer/DrawerNavigation';
+import { QuizOverview } from './hooks/useFetchQuizes';
+import LoadingIndicator from './components/LoadingIndicator';
+import { AppContext } from './context/ApplicationContext';
 
 type Props = DrawerScreenProps<DrawerParamList, 'MainScreen'>;
 
 
 const MainScreen: React.FC<Props> = ({ route, navigation }) => {
+    const { quizList, error, loading } = useContext(AppContext);
 
     type testItem = {
         description: string,
@@ -20,29 +23,37 @@ const MainScreen: React.FC<Props> = ({ route, navigation }) => {
         index: number;
     }
 
-    const RenderItem = ({ index, item }: RenderItemPops) => {
+    const renderTags = (arr: string[]) => {
+        return arr.map((str) => "#" + str).join(" ");
+    }
+
+    const RenderItem = ({ item }: { item: QuizOverview }) => {
         return (
             <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate('TestScreen', { id: index })}
-                key={index}
+                onPress={() => navigation.navigate('TestScreen', { id: item.id })}
+                key={item.id}
             >
-                <View style={styles.testContainer} key={index}>
-                    <Text style={styles.title}>{`Pytanie ${index + 1}`}</Text>
+                <View style={styles.testContainer}>
+                    <Text style={styles.title}>{item.name}</Text>
                     <Text>{item.description}</Text>
+                    <Text><Text style={styles.bold}>Tagi:</Text> {renderTags(item.tags)}</Text>
+                    <Text><Text style={styles.bold}>Poziom:</Text> {item.level}</Text>
+                    <Text><Text style={styles.bold}>Ilośc zadań:</Text> {item.numberOfTasks}</Text>
                 </View>
             </TouchableOpacity>
         )
     }
 
     const TestsDisplay = (): JSX.Element => {
-        return (
+        return quizList ? (
             <FlatList
-                data={tests}
+                data={quizList}
                 renderItem={RenderItem}
-                keyExtractor={(_, index) => index.toString()}
+                keyExtractor={(item) => item.id}
             />
-        )
+        ) :
+            <LoadingIndicator />
     }
 
     return (
@@ -57,7 +68,12 @@ const styles = StyleSheet.create({
         padding: 25,
     },
     title: {
+        textAlign: 'center',
         fontSize: 16,
+        fontFamily: 'RubikDoodleShadow-Regular',
+        color: 'red'
+    },
+    bold: {
         fontWeight: 'bold',
     },
     testContainer: {
@@ -66,6 +82,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginVertical: 10,
         borderRadius: 5,
+        alignItems: 'center'
     },
 })
 

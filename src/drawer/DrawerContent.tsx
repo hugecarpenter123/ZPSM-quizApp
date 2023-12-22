@@ -1,11 +1,10 @@
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import { Image, StyleSheet, View } from "react-native"
-import tests from "../tests/Tests";
-import { Drawer } from "./DrawerNavigation";
-import TestScreen from "../TestScreen";
+import { useContext } from "react";
+import { AppContext } from "../context/ApplicationContext";
 
 const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
-
+    const { loading, error, quizList } = useContext(AppContext);
     const Separator = (): JSX.Element => {
         return (
             <View style={styles.separator} />
@@ -13,18 +12,20 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     }
 
     const TestItems = () => {
-        return (
-            <>
-                {
-                    tests.map((item, index) => (
-                        <DrawerItem key={index}
-                            label={`${index + 1}. ${item.description.slice(0, 15)}...`}
-                            onPress={() => props.navigation.navigate('TestScreen', { id: index })}
-                        />
-                    ))
-                }
-            </>
-        )
+        return quizList ?
+            (
+                <>
+                    {
+                        quizList.map((item, index) => (
+                            <DrawerItem key={index}
+                                label={`${index + 1}. ${item.name.slice(0, 15)}...`}
+                                onPress={() => props.navigation.navigate('TestScreen', { id: item.id })}
+                            />
+                        ))
+                    }
+                </>
+            ) :
+            <></>;
     }
 
     return (
@@ -57,7 +58,6 @@ const styles = StyleSheet.create({
         width: '100%',
         flex: 1,
         borderRadius: 8,
-        // resizeMode: 'contain'
     }
 })
 

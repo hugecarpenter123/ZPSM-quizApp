@@ -1,18 +1,10 @@
 import { SafeAreaView, StyleSheet, Text, View, FlatList } from "react-native";
 import useFetchResults, { ResultJson } from "./hooks/useFetchResults";
-import React from "react";
-
-const result = {
-    nick: "Władysław Łokietek",
-    score: 17,
-    total: 20,
-    type: "historia",
-    date: "2022-11-22"
-}
+import React, { useEffect } from "react";
+import LoadingIndicator from "./components/LoadingIndicator";
 
 const ResultScreen = () => {
     const { error, loading, jsonResponse } = useFetchResults();
-
     const renderItem = ({ item }: { item: ResultJson }) => {
         return (
             <View style={styles.resultWrapper}>
@@ -57,6 +49,7 @@ const ResultScreen = () => {
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>Wyniki</Text>
             <ResultData />
+            {loading && <LoadingIndicator />}
         </SafeAreaView>
     );
 }

@@ -3,20 +3,20 @@ import React, { useEffect, useState } from "react";
 type FetchQuizDetailsHookResult = {
     error: boolean,
     loading: boolean,
-    jsonResponse: QuizJson[] | undefined;
-    fetchQuizDetails: () => Promise<void>
+    quiz: QuizDetails | undefined;
+    fetchQuizDetails: () => Promise<any>
 }
 
-export type QuizJson = {
+export type QuizDetails = {
     tags: string[],
-    tasks: Task[],
+    tasks: _Task[],
     name: string,
     description: string,
     level: string,
     id: string,
 }
 
-export type Task = {
+export type _Task = {
     question: string,
     answers: {
         content: string,
@@ -25,31 +25,28 @@ export type Task = {
     duration: number,
 }
 
-const useFetchQuizes = (id: string): FetchQuizDetailsHookResult => {
+const useFetchQuizDetails = (id: string): FetchQuizDetailsHookResult => {
     const [error, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-    const [jsonResponse, setJsonResponse] = useState<QuizJson[] | undefined>(undefined);
+    const [jsonResponse, setJsonResponse] = useState<QuizDetails | undefined>(undefined);
     const url = 'https://tgryl.pl/quiz/test/' + id;
 
     const fetchQuizDetails = async () => {
+        console.log("useFetchQuizeDetails.fetchQuizDetails()")
         const response = await fetch(url);
-        console.log("------------")
-        console.log(response)
-        console.log("------------")
         if (!response.ok) {
             setError(true);
             setLoading(false);
-            return;
+            return null;
         }
         const json = await response.json();
-        console.log("============")
-        console.log(json)
-        console.log("============")
         setJsonResponse(json);
         setLoading(false);
+        console.log("quiz details json response received & saved.")
+        return json;
     }
 
-    return { error, loading, jsonResponse, fetchQuizDetails }
+    return { error, loading, quiz: jsonResponse, fetchQuizDetails }
 }
 
-export default useFetchQuizes;
+export default useFetchQuizDetails;
