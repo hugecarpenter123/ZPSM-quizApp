@@ -15,20 +15,22 @@ const AppBooter = (): React.JSX.Element => {
                 ?
                 <AppTerms />
                 :
-                <AppContextProvider>
-                    <NavigationContainer>
-                        <DrawerNavigation />
-                    </NavigationContainer >
-                </AppContextProvider>
+                <NavigationContainer>
+                    <DrawerNavigation />
+                </NavigationContainer >
         )
     }
 
     return (
-        appInitialized
-            ?
-            <Main />
-            :
-            <SplashScreen />
+        <AppContextProvider>
+            {
+                appInitialized
+                    ?
+                    <Main />
+                    :
+                    <SplashScreen />
+            }
+        </AppContextProvider>
     )
 }
 

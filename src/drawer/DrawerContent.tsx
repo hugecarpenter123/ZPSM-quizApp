@@ -1,7 +1,8 @@
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
-import { Image, StyleSheet, View } from "react-native"
+import { Image, StyleSheet, Text, View } from "react-native"
 import { useContext } from "react";
 import { AppContext } from "../context/ApplicationContext";
+import LinearGradient from "react-native-linear-gradient";
 
 const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     const { loading, error, quizList } = useContext(AppContext);
@@ -28,6 +29,35 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             <></>;
     }
 
+    const onDrawQuiz = () => {
+        // wylosuj quiz i przekieruj do TestScreen
+        const randomQuizArrId = Math.floor(Math.random() * quizList!.length)
+        const quiz = quizList![randomQuizArrId];
+        props.navigation.navigate('TestScreen', quiz);
+    }
+
+    type DrawQuizButtonProps = {
+        label: string,
+        onPress: () => void;
+    }
+    const DrawQuizButton: React.FC<DrawQuizButtonProps> = ({ label, onPress }) => {
+        return (
+            <DrawerItem
+                label={() => (
+                    <LinearGradient
+                        colors={['violet', 'green', 'orange', 'red']}
+                        style={styles.drawQuizButton}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                    >
+                        <Text style={styles.drawQuizButtonText}>{label}</Text>
+                    </LinearGradient>
+                )}
+                onPress={onPress}
+            />
+        )
+    }
+
     return (
         <DrawerContentScrollView {...props}>
             <View style={styles.imageContainer}>
@@ -38,6 +68,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             </View>
             <DrawerItemList {...props} />
             <Separator />
+            <DrawQuizButton label="Losuj Quiz!" onPress={onDrawQuiz} />
             <TestItems />
         </DrawerContentScrollView>
     );
@@ -58,7 +89,19 @@ const styles = StyleSheet.create({
         width: '100%',
         flex: 1,
         borderRadius: 8,
-    }
+    },
+    drawQuizButton: {
+        // backgroundColor: 'violet',
+        padding: 10,
+        borderRadius: 5,
+    },
+    drawQuizButtonText: {
+        color: 'white',
+        fontSize: 18,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        letterSpacing: 1,
+    },
 })
 
 export default DrawerContent;

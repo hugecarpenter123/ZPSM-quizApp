@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import shuffleArray from "../utils/ShuffleData";
 
 type FetchQuizesHookResult = {
     error: boolean,
     loading: boolean,
     quizList: QuizOverview[] | undefined;
     quizIdList: string[] | undefined;
+    fetchQuizes: () => Promise<void>;
 }
 
 export type QuizOverview = {
@@ -25,24 +27,6 @@ const useFetchQuizes = (): FetchQuizesHookResult => {
     const url = 'https://tgryl.pl/quiz/tests';
 
     useEffect(() => {
-        const fetchQuizes = async () => {
-            console.log("useFetchQuizes.fetchQuizes()")
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const json = await response.json();
-                console.log("\tquizes json response received and saved.")
-                setQuizList(json);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error during fetch:', error);
-                setError(true);
-                setLoading(false);
-            }
-        };
-
         fetchQuizes();
     }, []);
 
@@ -52,21 +36,21 @@ const useFetchQuizes = (): FetchQuizesHookResult => {
         }
     }, [quizList]);
 
-    // const fetchQuizes = async () => {
-    //     console.log("useFetchQuizes.fetchQuizes()")
-    //     const response = await fetch(url);
-    //     if (!response.ok) {
-    //         setError(true);
-    //         setLoading(false);
-    //         return;
-    //     }
-    //     const json = await response.json();
-    //     console.log("\tquizes json response received and saved.")
-    //     setQuizList(json);
-    //     setLoading(false);
-    // }
+    const fetchQuizes = async () => {
+        console.log("useFetchQuizes.fetchQuizes()")
+        const response = await fetch(url);
+        if (!response.ok) {
+            setError(true);
+            setLoading(false);
+            return;
+        }
+        const json = await response.json();
+        console.log("\tquizes json response received, shuffled and saved.")
+        setQuizList(shuffleArray(json));
+        setLoading(false);
+    }
 
-    return { error, loading, quizList, quizIdList }
+    return { error, loading, quizList, quizIdList, fetchQuizes }
 }
 
 export default useFetchQuizes;

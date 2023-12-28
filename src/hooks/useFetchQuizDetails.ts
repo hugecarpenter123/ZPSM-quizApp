@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import shuffleArray from "../utils/ShuffleData";
 
 type FetchQuizDetailsHookResult = {
     error: boolean,
@@ -39,11 +40,26 @@ const useFetchQuizDetails = (id: string): FetchQuizDetailsHookResult => {
             setLoading(false);
             return null;
         }
-        const json = await response.json();
-        setJsonResponse(json);
+        const json: QuizDetails = await response.json();
+        console.log("quiz details json response received, shuffled & saved.")
+        const shuffledQuiz = shuffleData(json);
+        setJsonResponse(shuffledQuiz);
         setLoading(false);
-        console.log("quiz details json response received & saved.")
         return json;
+    }
+
+    const shuffleData = (json: QuizDetails): QuizDetails => {
+        const shuffledTasks = json.tasks.map(task => ({
+            ...task,
+            answers: shuffleArray(task.answers),
+        }));
+
+        const shuffledQuiz: QuizDetails = {
+            ...json,
+            tasks: shuffledTasks,
+        };
+
+        return shuffledQuiz;
     }
 
     return { error, loading, quiz: jsonResponse, fetchQuizDetails }
