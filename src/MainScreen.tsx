@@ -11,20 +11,9 @@ type Props = DrawerScreenProps<DrawerParamList, 'MainScreen'>;
 
 const MainScreen: React.FC<Props> = ({ route, navigation }) => {
     const { quizList, error, loading } = useContext(AppContext);
-
-    type testItem = {
-        description: string,
-        answers: string[],
-        correctAnswerId: number,
-    }
-
-    type RenderItemPops = {
-        item: testItem,
-        index: number;
-    }
-
+    
     const renderTags = (arr: string[]) => {
-        return arr.map((str) => "#" + str).join(" ");
+        return arr ? arr.map((str) => "#" + str).join(" ") : "";
     }
 
     const RenderItem = ({ item }: { item: QuizOverview }) => {
@@ -45,7 +34,9 @@ const MainScreen: React.FC<Props> = ({ route, navigation }) => {
         )
     }
 
-    const TestsDisplay = (): JSX.Element => {
+    const QuizOverviewsElement = (): JSX.Element => {
+        console.log("QuizOverviewsElement: (below)");
+        console.log(quizList);
         return quizList ? (
             <FlatList
                 data={quizList}
@@ -58,7 +49,7 @@ const MainScreen: React.FC<Props> = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <TestsDisplay />
+            <QuizOverviewsElement />
         </View>
     );
 }
