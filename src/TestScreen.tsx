@@ -9,6 +9,7 @@ import Tasks from './components/Tasks';
 import { AppContext } from './context/ApplicationContext';
 import { fetchCompleteQuizDetails as fetchQuizDetailsOffline } from './utils/DbManager';
 import { shuffleQuiz } from './utils/ShuffleData';
+import { ColorSpace } from 'react-native-reanimated';
 
 
 type Props = DrawerScreenProps<DrawerParamList, 'TestScreen'>;
@@ -23,11 +24,13 @@ const TestScreen: React.FC<Props> = ({ route, navigation }) => {
     useEffect(() => {
         console.log("TestScreen.useEffect() [id]")
         if (isConnected) {
+            console.log("is conntected - fetching quizDetails online")
             // fetchuj ONLINE, potasuj, zapisz do stanu
             fetchQuizDetails().then(quiz => setQuiz(shuffleQuiz(quiz)));
         } else {
+            console.log("not Conntected - fetching quizDetails offline")
             // fetchuj OFFLINE, potasuj, zapisz do stanu
-            fetchQuizDetailsOffline().then(quiz => setQuiz(shuffleQuiz(quiz)));
+            fetchQuizDetailsOffline(id).then(quiz => setQuiz(shuffleQuiz(quiz)));
         }
     }, [id])
 

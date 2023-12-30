@@ -137,23 +137,57 @@ export const createTablesPromise = () => {
   });
 };
 
+// // Insert QuizOverview data into the SQLite database
+// export const insertQuizOverview = (quizOverview) => {
+//   db.transaction(
+//     (tx) => {
+//       tx.executeSql(
+//         'INSERT OR REPLACE INTO QuizOverview (id, name, description, level, numberOfTasks, tags) VALUES (?, ?, ?, ?, ?, ?)',
+//         [
+//           quizOverview.id,
+//           quizOverview.name,
+//           quizOverview.description,
+//           quizOverview.level,
+//           quizOverview.numberOfTasks,
+//           JSON.stringify(quizOverview.tags), // Zapis tagów jako JSON w formie tekstowej
+//         ],
+//         (_, resultSet) => logInsertSuccess('QuizOverview', resultSet),
+//         (error) => logInsertError('QuizOverview', error)
+//       );
+//     },
+//     (_, error) => console.error('Error in insertQuizOverview transaction:', error)
+//   );
+// };
+
 // Insert QuizOverview data into the SQLite database
 export const insertQuizOverview = (quizOverview) => {
   db.transaction(
     (tx) => {
       tx.executeSql(
-        'INSERT OR REPLACE INTO QuizOverview (id, name, description, level, numberOfTasks, tags) VALUES (?, ?, ?, ?, ?, ?)',
-        [
-          quizOverview.id,
-          quizOverview.name,
-          quizOverview.description,
-          quizOverview.level,
-          quizOverview.numberOfTasks,
-          JSON.stringify(quizOverview.tags), // Zapis tagów jako JSON w formie tekstowej
-        ],
-        (_, resultSet) => logInsertSuccess('QuizOverview', resultSet),
-        (error) => logInsertError('QuizOverview', error)
-      );
+        'SELECT id FROM QuizOverview WHERE id = ?',
+        [quizOverview.id],
+        (_, result) => {
+          // QuizOverview already exists, skip insertion
+          if (result.rows.length > 0) {
+            console.log(`QuizOverview with id ${quizOverview.id} already exists. Skipping insertion.`);
+            return;
+          } else {
+            tx.executeSql(
+              'INSERT OR REPLACE INTO QuizOverview (id, name, description, level, numberOfTasks, tags) VALUES (?, ?, ?, ?, ?, ?)',
+              [
+                quizOverview.id,
+                quizOverview.name,
+                quizOverview.description,
+                quizOverview.level,
+                quizOverview.numberOfTasks,
+                JSON.stringify(quizOverview.tags), // Zapis tagów jako JSON w formie tekstowej
+              ],
+              (_, resultSet) => logInsertSuccess('QuizOverview', resultSet),
+              (error) => logInsertError('QuizOverview', error)
+            );
+          }
+        }
+      )
     },
     (_, error) => console.error('Error in insertQuizOverview transaction:', error)
   );
@@ -233,31 +267,7 @@ const fetchQuizDetails = (quizDetailsId, callback) => {
   );
 }
 
-// Pobierz wszystkie QuizDetails z bazy danych
-export const getQuizDetailsPromise = (quizDetailsId) => { //: Promise<QuizDetails[]>
-  return new Promise((resolve, reject) => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          'SELECT * FROM QuizDetails WHERE id=(?)',
-          [quizDetailsId],
-          (_, result) => {
-            const quizDetails = result.rows.raw();
-            resolve(quizDetails);
-          },
-          (_, error) => {
-            reject(error);
-          }
-        );
-      },
-      (error) => {
-        reject(error);
-      }
-    );
-  });
-};
-
-const getQuizDetailsTasksPromise = (quizOverviewId) => {
+export const getQuizDetailsTasksPromise = (quizOverviewId) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {
@@ -280,7 +290,7 @@ const getQuizDetailsTasksPromise = (quizOverviewId) => {
   });
 }
 
-const getTaskAnswersPromise = (taskId) => {
+export const getTaskAnswersPromise = (taskId) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {
@@ -361,33 +371,67 @@ export const getAllQuizOverviews = (callback) => {
 };
 
 
+// Pobierz wszystkie QuizDetails z bazy danych
 export const fetchCompleteQuizDetails = (quizDetailsId) => {
-  return new Promise((resolve, reject) => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          `SELECT QuizDetails.id, QuizDetails.name, QuizDetails.description, QuizDetails.level, QuizDetails.tags, Task.id AS taskId, Task.question, Task.duration, Answer.id AS answerId, Answer.content, Answer.isCorrect FROM QuizDetails
-          LEFT JOIN Task ON QuizDetails.id = Task.quizOverviewId
-          LEFT JOIN Answer ON Task.id = Answer.taskId
-          WHERE QuizDetails.id = ?`,
-          [quizDetailsId],
-          (_, rs) => {
-            console.log("x".repeat(20))
-            console.log(rs.rows.raw());
-            console.log("x".repeat(20))
-            resolve();
-          },
-          (_, error) => {
-            console.error(`Error during fetchCompleteQuizDetails: ${error.message}`);
-            reject(error);
-          }
-        );
-      },
-      (_, error) => {
-        console.error(`Error during fetchCompleteQuizDetails transaction: ${error.message}`);
-        reject(error);
-      }
-    );
+  console.log("QuizDetails SELECT query... ")
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.transaction(
+        async (tx) => {
+          tx.executeSql(
+            'SELECT * FROM QuizDetails WHERE id=(?)',
+            [quizDetailsId],
+            async (_, result) => {
+              const quizDetails = result.rows.raw()[0];
+              // console.log("\tQUIZ DETAILS" + "=".repeat(10));
+              // console.log(quizDetails)
+
+              const quizDetailsTasks = await getQuizDetailsTasksPromise(quizDetailsId);
+              // console.log("\tTASKS" + "=".repeat(10));
+              // console.log(quizDetailsTasks)
+
+              const tasksFormatted = await Promise.all(
+                quizDetailsTasks.map(async (task) => {
+                  const taskAnswers = await getTaskAnswersPromise(task.id);
+
+                  // console.log("\tTASK ANSWERS" + "=".repeat(10));
+                  // console.log(taskAnswers)
+
+                  const formattedAnswers = taskAnswers.map((answer) => {
+                    return {
+                      content: answer.content,
+                      isCorrect: answer.isCorrect === 1,
+                    };
+                  });
+
+                  // console.log("\tANSWERS FORMATTED" + "=".repeat(10));
+                  // console.log(formattedAnswers)
+
+                  return {
+                    question: task.question,
+                    duration: task.duration,
+                    answers: formattedAnswers,
+                  };
+                })
+              );
+              // console.log("\tTASKS FORMATTED" + "=".repeat(10));
+              // console.log(tasksFormatted)
+
+              quizDetails.tasks = tasksFormatted;
+              resolve(quizDetails);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 
