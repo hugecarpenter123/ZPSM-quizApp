@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Answers from "./Answers";
 import type { _Task } from '../hooks/useFetchQuizDetails';
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default Task;
+export default memo(Task);

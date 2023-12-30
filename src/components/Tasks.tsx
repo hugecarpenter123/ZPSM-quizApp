@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { QuizDetails } from "../hooks/useFetchQuizDetails";
+import { QuizDetails, _Task } from "../hooks/useFetchQuizDetails";
 import LoadingIndicator from "./LoadingIndicator";
 import usePostQuizResult, { QuizPostResult } from "../hooks/usePostQuizResult";
 import Task from "./Task";
+import { FlatList } from "react-native-gesture-handler";
 
 type TasksProps = {
     quiz: QuizDetails,
@@ -14,9 +15,9 @@ const Tasks: React.FC<TasksProps> = ({ quiz }) => {
     const [tasksAnswers, setTasksAnswers] = useState<{ [key: number]: number }>({});
     const { loading: postLoading, error: postError, postQuizResult } = usePostQuizResult();
 
-    const saveAnswers = (taskIndex: number, answerIndex: number) => {
+    const saveAnswers = useCallback((taskIndex: number, answerIndex: number) => {
         setTasksAnswers((prev) => ({ ...prev, [taskIndex]: answerIndex }));
-    }
+    }, []);
 
     const calcPoints = (): number => {
         let score = 0;
@@ -38,8 +39,13 @@ const Tasks: React.FC<TasksProps> = ({ quiz }) => {
             type: quiz!.name,
         }
         console.log(payload)
+        // console.log(tasksAnswers)
         postQuizResult(payload);
     }
+
+    const renderItem = ({ item, index }: { item: _Task; index: number }) => (
+        <Task task={item} taskIndex={index} saveTaskAnswer={saveAnswers} />
+    );
 
     return (
         <ScrollView style={styles.container}>
@@ -49,11 +55,11 @@ const Tasks: React.FC<TasksProps> = ({ quiz }) => {
                 <Text style={styles.bold}>Poziom: </Text>
                 {quiz.level}
             </Text>
-            {
-                quiz!.tasks.map((task, taskIndex) => (
-                    <Task task={task} taskIndex={taskIndex} key={taskIndex} saveTaskAnswer={saveAnswers} />
-                ))
-            }
+            <FlatList
+                data={quiz!.tasks}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}
+            />
             <TouchableOpacity
                 onPress={onSendClicked}
                 style={styles.button}
