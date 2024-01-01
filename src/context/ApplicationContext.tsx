@@ -23,6 +23,7 @@ type Props = {
  * 
  */
 export const AppContextProvider: React.FC<Props> = ({ children }) => {
+    console.log("AppContextProvider render")
     const { quizList: onlineQuizList, loading, error, quizIdList, fetchQuizes } = useFetchQuizes();
     const { isConnected } = useInternetConnectivity()
 

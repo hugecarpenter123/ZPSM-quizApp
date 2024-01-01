@@ -10,13 +10,13 @@ export type ResultJson = {
 }
 
 type FetchResultsHookResult = {
-    error: boolean,
+    error: null | string,
     loading: boolean,
     jsonResponse: ResultJson[] | undefined;
 }
 
 const useFetchResults = (): FetchResultsHookResult => {
-    const [error, setError] = useState<boolean>(false);
+    const [error, setError] = useState<null | string>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [jsonResponse, setJsonResponse] = useState<ResultJson[] | undefined>(undefined);
 
@@ -31,13 +31,15 @@ const useFetchResults = (): FetchResultsHookResult => {
         console.log(response)
         console.log("------------")
         if (!response.ok) {
-            setError(true);
+            setError("Błąd podczas pobierania danych");
             setLoading(false);
         }
         const json = await response.json();
         console.log("============")
         console.log(json)
         console.log("============")
+        setLoading(false)
+        setError(null)
         setJsonResponse(json);
     }
 

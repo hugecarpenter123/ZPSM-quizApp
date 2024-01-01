@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, FlatList } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, FlatList, Platform, StatusBar } from "react-native";
 import useFetchResults, { ResultJson } from "./hooks/useFetchResults";
 import React, { useEffect } from "react";
 import LoadingIndicator from "./components/LoadingIndicator";
@@ -46,7 +46,7 @@ const ResultScreen = () => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
             <Text style={styles.header}>Wyniki</Text>
             <ResultData />
             {loading && <LoadingIndicator />}
@@ -55,9 +55,10 @@ const ResultScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingVertical: 10,
-    },
+    safeArea: {
+        flex: 1,
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      },
     header: {
         fontFamily: 'RubikDoodleShadow-Regular',
         fontSize: 30,

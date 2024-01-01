@@ -47,28 +47,55 @@ const Tasks: React.FC<TasksProps> = ({ quiz }) => {
         <Task task={item} taskIndex={index} saveTaskAnswer={saveAnswers} />
     );
 
+    // return (
+    //     <ScrollView style={styles.container}>
+    //         <Text style={styles.header}>{quiz.name}</Text>
+    //         <Text style={styles.description}>{quiz.description}</Text>
+    //         <Text style={styles.level}>
+    //             <Text style={styles.bold}>Poziom: </Text>
+    //             {quiz.level}
+    //         </Text>
+    //         <FlatList
+    //             data={quiz!.tasks}
+    //             renderItem={renderItem}
+    //             keyExtractor={(item, index) => index.toString()}
+    //         />
+    //         <TouchableOpacity
+    //             onPress={onSendClicked}
+    //             style={styles.button}
+    //         >
+    //             <Text style={styles.buttonText}>Wyślij rozwiązanie</Text>
+    //         </TouchableOpacity>
+    //         {postLoading && <LoadingIndicator />}
+    //     </ScrollView>
+    // )
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.header}>{quiz.name}</Text>
-            <Text style={styles.description}>{quiz.description}</Text>
-            <Text style={styles.level}>
-                <Text style={styles.bold}>Poziom: </Text>
-                {quiz.level}
-            </Text>
-            <FlatList
-                data={quiz!.tasks}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
-            />
-            <TouchableOpacity
-                onPress={onSendClicked}
-                style={styles.button}
-            >
-                <Text style={styles.buttonText}>Wyślij rozwiązanie</Text>
-            </TouchableOpacity>
-            {postLoading && <LoadingIndicator />}
-        </ScrollView>
-    )
+        <FlatList
+            style={styles.container}
+            ListHeaderComponent={
+                <>
+                    <Text style={styles.header}>{quiz.name}</Text>
+                    <Text style={styles.description}>{quiz.description}</Text>
+                    <Text style={styles.level}>
+                        <Text style={styles.bold}>Poziom: </Text>
+                        {quiz.level}
+                    </Text>
+                </>
+            }
+            data={quiz!.tasks}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            ListFooterComponent={
+                <>
+                    <TouchableOpacity onPress={onSendClicked} style={styles.button}>
+                        <Text style={styles.buttonText}>Wyślij rozwiązanie</Text>
+                    </TouchableOpacity>
+                    {postLoading && <LoadingIndicator />}
+                </>
+            }
+        />
+    );
+
 }
 
 const styles = StyleSheet.create({
