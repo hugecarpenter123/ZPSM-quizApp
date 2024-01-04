@@ -1,17 +1,18 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, RefreshControl } from "react-native";
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { DrawerParamList } from './drawer/DrawerNavigation';
 import { QuizOverview } from './hooks/useFetchQuizes';
 import LoadingIndicator from './components/LoadingIndicator';
 import { AppContext } from './context/ApplicationContext';
+import { refresh } from '@react-native-community/netinfo';
 
 type Props = DrawerScreenProps<DrawerParamList, 'MainScreen'>;
 
 
 const MainScreen: React.FC<Props> = ({ route, navigation }) => {
-    const { quizList, error, loading } = useContext(AppContext);
-    
+    const { quizList, fetchQuizes, error, loading } = useContext(AppContext);
+
     const renderTags = (arr: string[]) => {
         return arr ? arr.map((str) => "#" + str).join(" ") : "";
     }
@@ -35,16 +36,29 @@ const MainScreen: React.FC<Props> = ({ route, navigation }) => {
     }
 
     const QuizOverviewsElement = (): JSX.Element => {
-        console.log("QuizOverviewsElement: (below)");
-        console.log(quizList);
-        return quizList ? (
+        // return quizList ? (
+        //     <FlatList
+        //         data={quizList}
+        //         renderItem={RenderItem}
+        //         keyExtractor={(item) => item.id}
+        //         ListEmptyComponent={() => <Text>Brak dostępnych danych...</Text>}
+        //     />
+        // ) :
+        //     <LoadingIndicator />
+        return (
             <FlatList
                 data={quizList}
                 renderItem={RenderItem}
                 keyExtractor={(item) => item.id}
+                ListEmptyComponent={() => <Text>Brak dostępnych danych...</Text>}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={loading}
+                        onRefresh={fetchQuizes}
+                    />
+                }
             />
-        ) :
-            <LoadingIndicator />
+        )
     }
 
     return (
