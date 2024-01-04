@@ -47,23 +47,6 @@ const useFetchQuizDetails = (id: string): FetchQuizDetailsHookResult => {
     const [jsonResponse, setJsonResponse] = useState<QuizDetails | undefined>(undefined);
     const url = 'https://tgryl.pl/quiz/test/' + id;
 
-    // const fetchQuizDetails = async () => {
-    //     console.log("useFetchQuizeDetails.fetchQuizDetails()")
-    //     const response = await fetch(url);
-    //     if (!response.ok) {
-    //         setError(true);
-    //         setLoading(false);
-    //         return null;
-    //     }
-    //     const json: QuizDetails = await response.json();
-    //     console.log("quiz details json response received, shuffled & saved.")
-    //     const shuffledQuiz = shuffleQuiz(json);
-    //     setJsonResponse(shuffledQuiz);
-    //     insertQuizDetails(shuffledQuiz);
-    //     setLoading(false);
-    //     return json;
-    // }
-
     const fetchQuizDetailsPromise = (): Promise<QuizDetails> => {
         console.log("useFetchQuizeDetails.fetchQuizDetails()");
 
@@ -79,7 +62,7 @@ const useFetchQuizDetails = (id: string): FetchQuizDetailsHookResult => {
                 })
                 .then(
                     (json: QuizDetails) => {
-                        console.log("Quiz details JSON response received, shuffled, and saved.");
+                        console.log("Quiz details JSON response received");
                         insertQuizDetails(json); // Save to DB
                         const shuffledQuiz = shuffleQuiz(json);
                         setJsonResponse(shuffledQuiz); // Set state

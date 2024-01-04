@@ -53,7 +53,7 @@ const Tasks: React.FC<TasksProps> = ({ quiz }) => {
             type: quiz!.name,
         }
         console.log(payload)
-        // postQuizResult(payload);
+        postQuizResult(payload);
     }
 
     // this should be triggered on timeout and on deliberate "goNext" click

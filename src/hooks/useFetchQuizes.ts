@@ -21,7 +21,7 @@ export type QuizOverview = {
 
 const useFetchQuizes = (): FetchQuizesHookResult => {
     const [error, setError] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     const [quizList, setQuizList] = useState<QuizOverview[] | undefined>(undefined);
     const [quizIdList, setQuizIdList] = useState<string[] | undefined>(undefined);
     const url = 'https://tgryl.pl/quiz/tests';
@@ -33,6 +33,8 @@ const useFetchQuizes = (): FetchQuizesHookResult => {
     }, [quizList]);
 
     const fetchQuizes = async () => {
+        setLoading(true);
+        setError(false);
         console.log("useFetchQuizes.fetchQuizes()")
         const response = await fetch(url);
         if (!response.ok) {
@@ -41,8 +43,8 @@ const useFetchQuizes = (): FetchQuizesHookResult => {
             return;
         }
         const json = await response.json();
-        console.log("\tquizes json response received, shuffled and saved.")
-        setQuizList(shuffleArray(json));
+        console.log("\tquizes json response received and saved.")
+        setQuizList(json);
         setLoading(false);
     }
 
