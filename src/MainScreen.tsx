@@ -11,7 +11,7 @@ type Props = DrawerScreenProps<DrawerParamList, 'MainScreen'>;
 
 
 const MainScreen: React.FC<Props> = ({ route, navigation }) => {
-    const { quizList, fetchQuizes, error, loading } = useContext(AppContext);
+    const { quizList, fetchQuizes, error, loading, isConnected } = useContext(AppContext);
 
     const renderTags = (arr: string[]) => {
         return arr ? arr.map((str) => "#" + str).join(" ") : "";
@@ -34,6 +34,13 @@ const MainScreen: React.FC<Props> = ({ route, navigation }) => {
             </TouchableOpacity>
         )
     }
+    
+    const onRefresh = () => {
+        if (isConnected) {
+            console.log("---refresh triggered and isConnected---")
+            fetchQuizes();
+        }
+    }
 
     const QuizOverviewsElement = (): JSX.Element => {
         // return quizList ? (
@@ -54,7 +61,7 @@ const MainScreen: React.FC<Props> = ({ route, navigation }) => {
                 refreshControl={
                     <RefreshControl
                         refreshing={loading}
-                        onRefresh={fetchQuizes}
+                        onRefresh={onRefresh}
                     />
                 }
             />

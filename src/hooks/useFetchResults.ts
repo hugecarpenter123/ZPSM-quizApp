@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AppContext } from "../context/ApplicationContext";
 
 export type ResultJson = {
     nick: string,
@@ -13,6 +14,7 @@ type FetchResultsHookResult = {
     error: null | string,
     loading: boolean,
     jsonResponse: ResultJson[] | undefined;
+    fetchResults: () => Promise<void>;
 }
 
 const useFetchResults = (): FetchResultsHookResult => {
@@ -20,30 +22,20 @@ const useFetchResults = (): FetchResultsHookResult => {
     const [loading, setLoading] = useState<boolean>(true);
     const [jsonResponse, setJsonResponse] = useState<ResultJson[] | undefined>(undefined);
 
-    useEffect(() => {
-        fetchResults();
-    }, []);
-
     const fetchResults = async () => {
         const url = "https://tgryl.pl/quiz/results?last=20";
         const response = await fetch(url);
-        console.log("------------")
-        console.log(response)
-        console.log("------------")
         if (!response.ok) {
             setError("Błąd podczas pobierania danych");
             setLoading(false);
         }
         const json = await response.json();
-        console.log("============")
-        console.log(json)
-        console.log("============")
         setLoading(false)
         setError(null)
         setJsonResponse(json);
     }
 
-    return { error, loading, jsonResponse }
+    return { error, loading, jsonResponse, fetchResults }
 }
 
 export default useFetchResults;

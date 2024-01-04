@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { shuffleArray } from "../utils/ShuffleData";
+import { AppContext } from "../context/ApplicationContext";
 
 type FetchQuizesHookResult = {
     error: boolean,
@@ -24,6 +25,7 @@ const useFetchQuizes = (): FetchQuizesHookResult => {
     const [loading, setLoading] = useState<boolean>(false);
     const [quizList, setQuizList] = useState<QuizOverview[] | undefined>(undefined);
     const [quizIdList, setQuizIdList] = useState<string[] | undefined>(undefined);
+
     const url = 'https://tgryl.pl/quiz/tests';
 
     useEffect(() => {

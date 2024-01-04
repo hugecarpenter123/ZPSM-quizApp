@@ -1,10 +1,20 @@
-import { SafeAreaView, StyleSheet, Text, View, FlatList, Platform, StatusBar } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, FlatList, Platform, StatusBar, RefreshControl } from "react-native";
 import useFetchResults, { ResultJson } from "./hooks/useFetchResults";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import LoadingIndicator from "./components/LoadingIndicator";
+import { AppContext } from "./context/ApplicationContext";
 
 const ResultScreen = () => {
-    const { error, loading, jsonResponse } = useFetchResults();
+    const { isConnected } = useContext(AppContext);
+    const { error, loading, jsonResponse, fetchResults } = useFetchResults();
+
+    useEffect(() => {
+        if (isConnected) {
+            console.log("ResultScreen.useEffect()[] (isConnected)")
+            fetchResults();
+        }
+    }, [])
+
     const renderItem = ({ item }: { item: ResultJson }) => {
         return (
             <View style={styles.resultWrapper}>
@@ -28,6 +38,13 @@ const ResultScreen = () => {
         );
     };
 
+    const onRefresh = () => {
+        if (isConnected) {
+            console.log("---refresh triggered and isConnected---")
+            fetchResults();
+        }
+    }
+
     const ResultData = (): React.JSX.Element => {
         if (jsonResponse) {
             return (
@@ -35,7 +52,14 @@ const ResultScreen = () => {
                     data={jsonResponse}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={loading}
+                            onRefresh={onRefresh}
+                        />
+                    }
                     style={styles.mainWrapper}
+                    ListEmptyComponent={() => <Text style={{textAlign: 'center'}}>Brak dostępnych danych...</Text>}
                 />
             );
         } else if (!error && loading) {
@@ -58,7 +82,7 @@ const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-      },
+    },
     header: {
         fontFamily: 'RubikDoodleShadow-Regular',
         fontSize: 30,
