@@ -1,7 +1,7 @@
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useContext, useEffect, useState } from 'react'
 import { DrawerParamList } from './drawer/DrawerNavigation';
-import { Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import useFetchQuizDetails, { QuizDetails } from './hooks/useFetchQuizDetails';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingIndicator from './components/LoadingIndicator';
@@ -47,10 +47,16 @@ const TestScreen: React.FC<Props> = ({ route, navigation }) => {
 
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={style.main}>
             <Screen />
         </SafeAreaView>
     );
 }
+
+const style = StyleSheet.create({
+    main: {
+        flex: 1,
+    }
+})
 
 export default TestScreen;

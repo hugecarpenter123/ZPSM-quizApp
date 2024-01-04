@@ -1,4 +1,4 @@
-import React, {  } from "react";
+import React, { } from "react";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MainScreen from "../MainScreen";
 import ResultScreen from "../OutcomeScreen";
@@ -23,8 +23,16 @@ const DrawerNavigation = () => {
         >
             <Drawer.Screen name="MainScreen" component={MainScreen} options={{ title: "Home" }} />
             <Drawer.Screen name="ResultScreen" component={ResultScreen} options={{ title: "Results" }} />
-            <Drawer.Screen name="TestScreen" component={TestScreen} options={{ title: "Test", drawerItemStyle: { display: "none" } }} />
-
+            <Drawer.Screen
+                name="TestScreen"
+                component={TestScreen}
+                options={
+                    {
+                        title: "Test",
+                        drawerItemStyle: { display: "none" },
+                        freezeOnBlur: true
+                    }
+                } />
         </Drawer.Navigator>
     );
 }

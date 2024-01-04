@@ -1,25 +1,31 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native"
 import { _Task } from "../hooks/useFetchQuizDetails"
 
+type _Answers = {
+    content: string,
+    isCorrect: boolean;
+}[]
+
 type AnswersProps = {
-    task: _Task,
-    taskIndex: number,
+    answers: _Answers;
     onSelection: (answerIndex: number) => void,
     selectedId: number | null,
 }
 
-const Answers: React.FC<AnswersProps> = ({ task, taskIndex, onSelection, selectedId }) => {
+const Answers: React.FC<AnswersProps> = ({ onSelection, selectedId, answers }) => {
     return (
         <>
             {
-                task.answers.map((item, answerIndex) => (
+                answers.map((item, answerIndex) => (
                     <TouchableOpacity
                         style={[styles.answerButton, selectedId === answerIndex && styles.selected]}
                         key={answerIndex}
                         onPress={() => onSelection(answerIndex)}
                         activeOpacity={0.8}
                     >
-                        <Text>{item.content}</Text>
+                        <Text
+                            style={[selectedId === answerIndex && styles.selectedText]}
+                        >{item.content}</Text>
                     </TouchableOpacity>
                 ))
             }
@@ -30,6 +36,7 @@ const Answers: React.FC<AnswersProps> = ({ task, taskIndex, onSelection, selecte
 
 const styles = StyleSheet.create({
     answerButton: {
+        // width: '100%',
         marginVertical: 4,
         borderRadius: 4,
         padding: 10,
@@ -37,10 +44,13 @@ const styles = StyleSheet.create({
         borderColor: 'grey'
     },
     selected: {
-        backgroundColor: 'lightgreen',
-        borderColor: 'green',
+        backgroundColor: '#ffc99c',
+        borderColor: '#ff841d',
         borderWidth: 2,
     },
+    selectedText: {
+        color: 'white',
+    }
 
 })
 
