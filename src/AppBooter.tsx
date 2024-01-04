@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useAppTerms from "./hooks/useAppTerms"
 import useSplashScreen from "./hooks/useSplashScreen";
 import { NavigationContainer } from '@react-navigation/native';

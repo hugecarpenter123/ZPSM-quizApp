@@ -7,66 +7,6 @@ const db = SQLite.openDatabase(
   (error) => { console.error("Error opening the db:", error) }
 );
 
-// // Define SQLite tables
-// export const createTables = () => {
-//   db.transaction(
-//     (tx) => {
-//       tx.executeSql(
-//         `CREATE TABLE IF NOT EXISTS QuizOverview (
-//           id TEXT PRIMARY KEY,
-//           name TEXT,
-//           description TEXT,
-//           level TEXT,
-//           numberOfTasks INTEGER,
-//           tags TEXT
-//         )`,
-//         [],
-//         (_, rs) => logTableCreationSuccess('QuizOverview', rs),
-//         (_, error) => { logTableCreationError('QuizOverview', error) }
-//       );
-
-//       tx.executeSql(
-//         `CREATE TABLE IF NOT EXISTS QuizDetails (
-//           id TEXT PRIMARY KEY,
-//           name TEXT,
-//           description TEXT,
-//           level TEXT
-//         )`,
-//         [],
-//         (_, rs) => logTableCreationSuccess('QuizDetails', rs),
-//         (_, error) => logTableCreationError('QuizDetails', error)
-//       );
-
-//       tx.executeSql(
-//         `CREATE TABLE IF NOT EXISTS Task (
-//           id INTEGER PRIMARY KEY AUTOINCREMENT,
-//           quizOverviewId TEXT,
-//           question TEXT,
-//           duration INTEGER,
-//           FOREIGN KEY (quizOverviewId) REFERENCES QuizOverview(id)
-//         )`,
-//         [],
-//         (_, rs) => logTableCreationSuccess('Task', rs),
-//         (_, error) => logTableCreationError('Task', error),
-//       );
-
-//       tx.executeSql(
-//         `CREATE TABLE IF NOT EXISTS Answer (
-//           id INTEGER PRIMARY KEY AUTOINCREMENT,
-//           taskId INTEGER,
-//           content TEXT,
-//           isCorrect INTEGER,
-//           FOREIGN KEY (taskId) REFERENCES Task(id)
-//         )`,
-//         [],
-//         (_, rs) => logTableCreationSuccess('Answer', rs),
-//         (_, error) => logTableCreationError('Answer', error),
-//       );
-//     },
-//     (_, error) => console.error('Error in createTables transaction:', error),
-//     () => { }, // success
-//   );
-// };
 
 // Define SQLite tables
 export const createTablesPromise = () => {
